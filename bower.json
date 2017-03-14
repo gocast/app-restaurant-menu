@@ -11,8 +11,10 @@
     "input-file": "git@github.com:sharedlabs/input-file.git",
     "iron-flex-layout": "PolymerElements/iron-flex-layout#2.0-preview",
     "iron-image": "PolymerElements/iron-image#2.0-preview",
+    "overlay-container": "git@github.com:sharedlabs/overlay-container.git",
     "paper-spinner": "PolymerElements/paper-spinner#2.0-preview",
-    "polymer": "git@github.com:Polymer/polymer#v2.0.0-rc.2"
+    "polymer": "git@github.com:Polymer/polymer#v2.0.0-rc.2",
+    "touch-item": "git@github.com:sharedlabs/touch-item.git#^0.1.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#2.0-preview",

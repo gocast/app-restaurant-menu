@@ -1,0 +1,130 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../overlay-container/animated-overlay-mixin.html">
+<link rel="import" href="../touch-item/touch-item.html">
+<link rel="import" href="../goc-styles/goc-styles.html">
+
+<dom-module id="app-restaurant-new-category-overlay">
+  <template>
+    <style include="header-layout-styles btn-styles icon-btn-styles box-styles form-v1-styles">
+      :host {
+        background: var(--goc-background-color);
+        bottom: 0;
+        left: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+      }
+    </style>
+
+    <div class="header-layout">
+      <div class="header-layout__header">
+        <div class="header-toolbar">
+
+          <button class="icon-btn icon-btn--primary" on-click="_onBackTapped">
+            <touch-item><iron-icon icon="arrow-back"></iron-icon></touch-item>
+          </button>
+
+          <div class="header-toolbar__main-content">
+            <div class="header-toolbar__title">Create a category</div>
+            <div class="header-toolbar__subtitle">e.g desserts</div>
+          </div>
+
+          <button class="btn btn--primary" on-click="_submit">
+            <touch-item>Create</touch-item>
+          </button>
+        </div>
+      </div>
+
+      <div class="header-layout__content">
+        <div class="box form">
+          <div class="form__item form__item--last">
+            <div class="form__input-container">
+              <label class="form__label">Name</label>
+              <input class="form__input" id="nameInput" placeholder="Name"/>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </template>
+  <script>
+
+    class AppRestaurantNewCategoryOverlay extends AnimatedOverlayMixin(Polymer.Element) {
+
+      static get is() {return 'app-restaurant-new-category-overlay';}
+
+      static get properties() {
+        return {
+        };
+      }
+
+      constructor() {
+        super();
+        this._overlayOpenAnimationFinish = this._overlayOpenAnimationFinish.bind(this);
+        this._onKeydown = this._onKeydown.bind(this);
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+        this._toggleListeners({enable: true});
+      }
+
+      disconnectedCallback() {
+        super.disconnectedCallback();
+        this._toggleListeners({enable: false});
+      }
+
+      _toggleListeners({enable}) {
+        const m = enable ? 'addEventListener' : 'removeEventListener';
+
+        this[m]('keydown', this._onKeydown);
+        this[m]('overlay-open-animation-finish', this._overlayOpenAnimationFinish);
+      }
+
+      _overlayOpenAnimationFinish() {
+        this.$.nameInput.focus();
+      }
+
+      _submit() {
+        if (this._validate()) {
+          const detail = this._getFormValues();
+
+          this.dispatchEvent(new CustomEvent('submit', {
+            composed: true,
+            detail
+          }));
+        }
+      }
+
+      _validate() {
+        return this.$.nameInput.value.length > 0;
+      }
+
+      _getFormValues() {
+        return {
+          name: this.$.nameInput.value || null
+        };
+      }
+
+      _onKeydown(event) {
+        const enterKey = 13;
+
+        if (event.keyCode === enterKey) {
+          this._submit();
+        }
+      }
+
+      _onBackTapped() {
+        requestAnimationFrame(_ => {
+          this.opened = false;
+        });
+      }
+
+    }
+
+    customElements.define(AppRestaurantNewCategoryOverlay.is, AppRestaurantNewCategoryOverlay);
+
+  </script>
+</dom-module>

@@ -1,11 +1,59 @@
 <link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../goc-styles/goc-styles.html">
+<link rel="import" href="../goc-icons/goc-icons.html">
+<link rel="import" href="../goc-apps/goc-app-icon.html">
+<link rel="import" href="app-restaurant-new-category-overlay.html">
 
 <dom-module id="app-restaurant-menu">
   <template>
-    <style>
+    <style include="header-layout-styles btn-styles icon-btn-styles">
       :host {
+        background: var(--goc-background-color);
+        display: block;
+        height: 100%;
       }
     </style>
+
+    <goc-apps-collection
+        app-name="restaurant-menu"
+        item="{{_appInfo}}"
+        language="[[language]]"></goc-apps-collection>
+
+    <div class="header-layout">
+      <div class="header-layout__header">
+        <div class="header-toolbar">
+
+          <button class="icon-btn icon-btn--primary" on-click="_onBackTapped">
+            <touch-item><iron-icon icon="arrow-back"></iron-icon></touch-item>
+          </button>
+
+          <goc-app-icon size="small" app-name="restaurant-menu"></goc-app-icon>
+
+          <div class="header-toolbar__main-content">
+            <div class="header-toolbar__title">[[contentName]]</div>
+            <div class="header-toolbar__subtitle">[[_appInfo.displayName]]</div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="header-layout__content">
+        <dom-repeat items="[[data.categories]]" as="category">
+          <template>
+            <div class="box">
+              <div class="box__row">[[category.name]]</div>
+              <dom-repeat>
+                <template items="[[category.items]]">
+
+                </template>
+              </dom-repeat>
+            </div>
+          </template>
+        </dom-repeat>
+
+        <button on-click="_onCreateCategoryTapped">Create Category</button>
+      </div>
+    </div>
 
   </template>
   <script>
@@ -14,9 +62,47 @@
 
       static get is() {return 'app-restaurant-menu';}
 
+      static get properties() {
+        return {
+
+          contentName: String,
+
+          data: Object,
+
+          _appInfo: Object,
+
+          _newCategoryOverlay: Object
+
+        };
+      }
+
+      _onCreateCategoryTapped(event) {
+        if (!this._newCategoryOverlay) {
+          this._newCategoryOverlay = document.createElement('app-restaurant-new-category-overlay');
+
+          this._newCategoryOverlay.onDetach = _ => {
+            this._newCategoryOverlay = null;
+          };
+
+          this._newCategoryOverlay.addEventListener('submit', event => {
+            if (!event.currentTarget.canceled) {
+              console.log('not canceled');
+            }
+          });
+
+          this._newCategoryOverlay.open();
+        }
+      }
+
     }
 
     customElements.define(AppRestaurantMenu.is, AppRestaurantMenu);
+
+    // {
+    //   categories: [
+    //     {name: 'Entrantes', items: [{name: 'patatas', price: '6€'}]}
+    //   ]
+    // }
 
   </script>
 </dom-module>
