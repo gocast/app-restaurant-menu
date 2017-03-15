@@ -108,6 +108,16 @@
             </div>
           </div>
 
+          <div class="form__item">
+            <div class="form__input-container">
+              <label class="form__label">Currency</label>
+              <select class="form__select" id="currencySelect">
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+              </select>
+            </div>
+          </div>
+
           <div class="form__item form__item--last">
             <div class="form__input-container">
               <label class="form__label">Photos</label>
@@ -162,6 +172,34 @@
             type: Array,
             value: _ => {
               return [];
+            }
+          },
+
+          _currencies: {
+            type: Array,
+            value: _ => {
+              // TODO: use all currencies
+              // https://gist.github.com/Fluidbyte/2973986
+              return [
+                {
+                  "symbol": "$",
+                  "name": "US Dollar",
+                  "symbol_native": "$",
+                  "decimal_digits": 2,
+                  "rounding": 0,
+                  "code": "USD",
+                  "name_plural": "US dollars"
+                },
+                {
+                  "symbol": "€",
+                  "name": "Euro",
+                  "symbol_native": "€",
+                  "decimal_digits": 2,
+                  "rounding": 0,
+                  "code": "EUR",
+                  "name_plural": "euros"
+                }
+              ];
             }
           }
 
@@ -262,6 +300,7 @@
           name: this.$.nameInput.value || null,
           description: this.$.descriptionInput.value || null,
           price: this.$.priceInput.value || null,
+          currency: this.$.currencySelect.value || null,
           media: this._media || null
         };
       }

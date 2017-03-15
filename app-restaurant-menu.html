@@ -18,6 +18,42 @@
       .box {
         margin-bottom: 20px;
       }
+
+      .category {
+        font-size: 22px;
+        font-weight: 700;
+      }
+
+      .item {
+        @apply --layout-horizontal;
+        @apply --layout-center;
+      }
+
+      .item__texts {
+        @apply --layout-flex;
+      }
+
+      .item__name {
+        font-size: 18px;
+      }
+
+      .item__description {
+        color: var(--paper-grey-600);
+        margin-top: 4px;
+      }
+
+      .item__price {
+        font-size: 20px;
+        padding: 0 20px;
+      }
+
+      .layout-horizontal {
+        @apply --layout-horizontal;
+      }
+
+      .layout-center {
+        @apply --layout-center;
+      }
     </style>
 
     <goc-apps-collection
@@ -44,32 +80,40 @@
       </div>
 
       <div class="header-layout__content">
+        <button on-click="_onCreateCategoryTapped" class="btn" style="margin-bottom: 15px;">
+          <touch-item>Create Category</touch-item>
+        </button>
+
         <dom-repeat items="[[data.categories]]" as="category" index-as="category_index">
           <template>
             <div class="box">
-              <touch-item on-click="_onCategoryTapped">
-                <div class="box__row">[[category.name]]</div>
+              <touch-item on-click="_onCategoryTapped" class="category">
+                <div class="box__row">
+                  [[category.name]]
+                </div>
               </touch-item>
-              <div class="box__row">
-                <button on-click="_onAddItemTapped">
-                  <touch-item>
-                    <iron-icon icon="plus"></iron-icon>
-                    Add item
-                  </touch-item>
-                </button>
-              </div>
+              <touch-item>
+                <div class="box__row layout-horizontal layout-center" on-click="_onAddItemTapped">
+                  <iron-icon icon="plus" style="margin-right: 8px;"></iron-icon>
+                  <div style="margin-top: -2px;">Add item</div>
+                </div>
+              </touch-item>
               <dom-repeat items="[[category.items]]">
                 <template>
                   <touch-item on-click="_onItemTapped" category-index$="[[category_index]]">
-                    <div class="box__row">[[item.name]]</div>
+                    <div class="box__row item">
+                      <div class="item__texts">
+                        <div class="item__name">[[item.name]]</div>
+                        <div class="item__description">[[item.description]]</div>
+                      </div>
+                      <div class="item__price">[[_computeCurrencySymbol(item.currency)]][[item.price]]</div>
+                    </div>
                   </touch-item>
                 </template>
               </dom-repeat>
             </div>
           </template>
         </dom-repeat>
-
-        <button on-click="_onCreateCategoryTapped">Create Category</button>
       </div>
     </div>
 
@@ -233,6 +277,16 @@
 
       _onBackTapped() {
         this.dispatchEvent(new Event('close-app', {composed: true}));
+      }
+
+      _computeCurrencySymbol(currency) {
+        if (currency === 'EUR') {
+          return '€';
+        }
+        if (currency === 'USD') {
+          return '$';
+        }
+
       }
 
     }
