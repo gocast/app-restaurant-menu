@@ -148,7 +148,14 @@
 
       _computeMainPicture(item) {
         if (item.media[0]) {
-          return item.media[0].url;
+          const thumbs = item.media[0];
+          const smallThumbnail = thumbs.find(image => {
+            return image.width === 240;
+          }) || thumbs[0];
+
+          if (smallThumbnail) {
+            return smallThumbnail.url;
+          }
         }
       }
 
