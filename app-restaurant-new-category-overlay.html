@@ -19,17 +19,24 @@
     <div class="header-layout">
       <div class="header-layout__header">
         <div class="header-toolbar">
-
           <button class="icon-btn icon-btn--primary" on-click="_onBackTapped">
             <touch-item><iron-icon icon="arrow-back"></iron-icon></touch-item>
           </button>
 
           <div class="header-toolbar__main-content">
-            <div class="header-toolbar__title">Create a category</div>
+            <div class="header-toolbar__title">[[_computedToolbarTitle(category)]]</div>
           </div>
 
+          <dom-if if="[[category]]">
+            <template>
+              <button class="icon-btn icon-btn--primary" on-click="_onDeleteCategoryTapped">
+                <touch-item><iron-icon icon="delete"></iron-icon></touch-item>
+              </button>
+            </template>
+          </dom-if>
+
           <button class="btn btn--primary" on-click="_submit">
-            <touch-item>Create</touch-item>
+            <touch-item>[[_computedToolbarSubmit(category)]]</touch-item>
           </button>
         </div>
       </div>
@@ -39,7 +46,7 @@
           <div class="form__item form__item--last">
             <div class="form__input-container">
               <label class="form__label">Name</label>
-              <input class="form__input" id="nameInput" placeholder="Name"/>
+              <input class="form__input" id="nameInput" placeholder="Name" value$="[[category.name]]"/>
             </div>
           </div>
         </div>
@@ -56,6 +63,12 @@
 
       static get properties() {
         return {
+
+          category: {
+            type: Object,
+            value: null
+          }
+
         };
       }
 
@@ -99,14 +112,24 @@
         }
       }
 
+      _onDeleteCategoryTapped() {
+        if (this.category && confirm('Delete this category?')) {
+          this.dispatchEvent(new CustomEvent('delete', {
+            composed: true,
+            detail: {category: this.category}
+          }));
+
+          this.opened = false;
+        }
+      }
+
       _validate() {
         return this.$.nameInput.value.length > 0;
       }
 
       _getFormValues() {
         return {
-          name: this.$.nameInput.value || null,
-          items: []
+          name: this.$.nameInput.value || null
         };
       }
 
@@ -122,6 +145,20 @@
         requestAnimationFrame(_ => {
           this.opened = false;
         });
+      }
+
+      _computedToolbarTitle(category) {
+        if (category) {
+          return 'Edit a category';
+        }
+        return 'Add a category';
+      }
+
+      _computedToolbarSubmit(category) {
+        if (category) {
+          return 'Save';
+        }
+        return 'Create';
       }
 
     }
