@@ -1,0 +1,160 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../goc-styles/goc-styles.html">
+<link rel="import" href="../goc-icons/goc-icons.html">
+<link rel="import" href="../goc-apps/goc-app-icon.html">
+<link rel="import" href="../iron-image/iron-image.html">
+
+<dom-module id="app-restaurant-menu-physicalweb">
+  <template>
+    <style include="header-layout-styles btn-styles icon-btn-styles">
+      :host {
+        display: block;
+        height: 100%;
+        font-weight: 300;
+        padding: 0 25px;
+      }
+
+      ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .category {
+        margin-bottom: 20px;
+      }
+
+      .category__name {
+        margin: 0;
+        text-align: center;
+        font-weight: 400;
+        font-size: 26px;
+      }
+
+      .category__header-sep {
+        width: 50px;
+        height: 1px;
+        background: #ddd;
+        margin: 10px auto;
+      }
+
+      .item {
+        @apply --layout-horizontal;
+        justify-content: space-between;
+        border-bottom: solid 1px #ddd;
+        padding-bottom: 10px;
+      }
+
+      .item:nth-last-child(-n+2) {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+
+      .item__text {
+        margin-right: 10px;
+      }
+
+      .item__name {
+        margin: 10px 0 0 0;
+        font-size: 16px;
+        font-weight: 700;
+      }
+
+      .item__description {
+        margin: 10px 0;
+      }
+
+      .item__picture iron-image {
+        width: 120px;
+        height: 80%;
+        margin-top: 15px;
+      }
+    </style>
+
+    <goc-apps-collection
+        app-name="restaurant-menu"
+        item="{{_appInfo}}"
+        language="[[language]]"></goc-apps-collection>
+
+    <ul>
+      <dom-repeat items="[[data.categories]]" as="category">
+        <template>
+          <li class="category">
+            <h2 class="category__name">[[category.name]]</h2>
+            <div class="category__header-sep"></div>
+
+            <ul class="category__items">
+              <dom-repeat items="[[category.items]]">
+                <template>
+                  <li class="item">
+                    <div class="item__text">
+                      <h3 class="item__name">[[item.name]]</h3>
+                      <div class="item__description">[[item.description]]</div>
+                      <div class="item__price">[[item.currency]][[item.price]]</div>
+                    </div>
+
+                    <dom-if if="[[_computeHasPicture(item)]]">
+                      <template>
+                        <div class="item__picture">
+                          <iron-image
+                              src$="[[_computeMainPicture(item)]]"
+                              sizing="contain"
+                              position="top"
+                              preload
+                              fade></iron-image>
+                        </div>
+                      </template>
+                    </dom-if>
+                  </li>
+                </template>
+              </dom-repeat>
+            </ul>
+          </li>
+        </template>
+      </dom-repeat>
+    </ul>
+
+
+  </template>
+  <script>
+
+    class AppRestaurantMenuPhysicalweb extends Polymer.Element {
+
+      static get allergens() {
+        return [
+          'fruit', 'rice', 'garlic', 'crustaceans',
+          'oats', 'milk', 'peanut', 'soy', 'wheat',
+          'egg', 'gluten', 'sulfites',
+        ];
+      }
+
+      static get is() {return 'app-restaurant-menu-physicalweb';}
+
+      static get properties() {
+        return {
+
+          contentName: String,
+
+          data: {
+            type: Object,
+          },
+
+        };
+      }
+
+      _computeMainPicture(item) {
+        if (item.media[0]) {
+          return item.media[0].url;
+        }
+      }
+
+      _computeHasPicture(item) {
+        return item.media.length;
+      }
+
+    }
+
+    customElements.define(AppRestaurantMenuPhysicalweb.is, AppRestaurantMenuPhysicalweb);
+
+  </script>
+</dom-module>

@@ -1,0 +1,153 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <title>app-restaurant-menu-physicalweb demo</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900" rel="stylesheet">
+    <link rel="import" href="../app-restaurant-menu-physicalweb.html">
+
+    <style>
+      body {
+        font-family: 'Lato', sans-serif;
+        background: var(--goc-background-color);
+        height: 100vh;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+
+    <app-restaurant-menu-physicalweb content-name="Menu del día"></app-restaurant-menu-physicalweb>
+    <script>
+    const pw = document.querySelector('app-restaurant-menu-physicalweb');
+    const data = {
+      categories: [
+
+      {
+        name: 'Lo mas pedido',
+        items: [{
+          name: 'Tequeños',
+          description: 'Deliciosos dedos de queso blanco envueltos con una crujiente capa de hojaldre, acompañados de salsa de frutos rojos y mermelada de pimientos.',
+          price: 7,
+          currency: '€',
+          soldOut: false,
+          media: [{
+            type: 'photo',
+            url: 'http://www.venezuelatuya.com/cocina/imagenes/tequenos3.jpg',
+          }],
+          allergens: ['rice', 'sulfites',],
+        }, {
+          name: 'La Hache',
+          description: 'Carne de ternera acompañada con queso cheddar fundido, beicon, huevo frito y nuestros aros de cebolla, con pan brioche.',
+          price: 9.9,
+          currency: '€',
+          soldOut: false,
+          media: [{
+            type: 'photo',
+            url: 'https://s-media-cache-ak0.pinimg.com/736x/04/41/7c/04417caf48421581d0b0c2a7d5de4f74.jpg',
+          }],
+          allergens: ['rice', 'sulfites',],
+        }, {
+          name: 'Philly',
+          description: 'Queso cheddar, pico de gallo, guacamole, jalapeños y salsa chipotle',
+          price: 12.5,
+          currency: '€',
+          soldOut: false,
+          media: [{
+            type: 'photo',
+            url: 'https://i.ytimg.com/vi/MI7flNL47AU/maxresdefault.jpg',
+          }],
+          allergens: ['rice', 'sulfites',],
+        }],
+      },
+
+      {
+        name: 'Entrantes',
+        items: [{
+          name: 'Tequeños',
+          description: 'Deliciosos dedos de queso blanco envueltos con una crujiente capa de hojaldre, acompañados de salsa de frutos rojos y mermelada de pimientos.',
+          price: 7,
+          currency: '€',
+          soldOut: false,
+          media: [{
+            type: 'photo',
+            url: 'http://www.venezuelatuya.com/cocina/imagenes/tequenos3.jpg',
+          }],
+          allergens: ['rice', 'sulfites',],
+        }, {
+          name: 'Nachos',
+          description: 'Tortilla chips acompañados con nuestra salsa guacamole, pico de gallo, jalapeños y queso',
+          price: 6.8,
+          currency: '€',
+          soldOut: false,
+          media: [],
+          allergens: ['rice', 'sulfites',],
+        }, {
+          name: 'Mini burgers',
+          description: 'Degusta 3 de nuestras deliciosas hamburguesas en versión mini.',
+          price: 6.50,
+          currency: '€',
+          soldOut: false,
+          media: [],
+          allergens: ['rice', 'sulfites',],
+        }, {
+          name: 'Chiquen tenders',
+          description: 'Tiras de pechuga de pollo frito empanado con panko, acompañadas con salsa de la casa',
+          price: 7.50,
+          currency: '€',
+          soldOut: false,
+          media: [],
+          allergens: ['rice', 'sulfites',],
+        }],
+      },
+
+      {
+        name: 'Del huerto',
+        items: [{
+          name: 'Ensalada de la H',
+          description: 'Mézclum de lechugas acompañado con champiñones salteados, cebollas caramelizadas y tomate seco.',
+          price: 8.5,
+          currency: '€',
+          soldOut: false,
+          media: [],
+          allergens: ['rice', 'sulfites',],
+        }, {
+          name: 'César',
+          description: 'Mézclum de lechugas, picatostes, queso parmesano, beicon crujiente.',
+          price: 7.5,
+          currency: '€',
+          soldOut: false,
+          media: [],
+          allergens: ['rice', 'sulfites',],
+        }, {
+          name: 'La Cabrita',
+          description: 'Mézclum de lechugas acompañados con suculentas rodajas de queso de cabra.',
+          price: 6.50,
+          currency: '€',
+          soldOut: false,
+          media: [{
+            type: 'photo',
+            url: 'https://lh3.googleusercontent.com/xn4wfRaIRGzeanKwHAwQygzhLvGAa9ITVseAMfNHzZ0H022WrbOJegkZb34mfFuBjLp897YiUrsUG6prEfRL_sK_X9x4zLju9RfjEsZb53iVbTq_jVXwaifzOdHhiz82kQFUgXPA5y89Hq4buQZ-sEJeF868UZ_ZYBEYEM2L7QOvoF_0tJEcceMhd_MoLTecwpN1Gr5l2jyODBjlCoylH4EmLW6iIUMIunovBn8WzMOvjXBrxcfmoE84exStCEMiLlIScQgT9FaV940mGSJvP1ngrNGInVu2pf9mGLWeHflpKFFtbNdm6wn-BAfwuni4xOEm9E_lFn9rdcN3CcZ5jlb7uTXcpBvfl-sQo1PX-1r-GsF1c2AEjQ0KnYaUOSdRLHnLh_KzuS3rvJ68nv1u5eBNp19zq-LJMo72T_vbzzHdo2ZzEwbE0wBPvbUXZ9ah0mnY4TAd5ndVOdb2ohNFzeQ2yXA48Ehm8fri8Y0u20DlxFFOgJjBQbt89MwI1gOVwSyibdYTJsxdhbjQ23HCuCs5XlrFlw139OV7oo8OK3FklLkuQAfvk3uFA3O-gWsNHbA0boNlul-sN8Euewz3x-PCqQQbH_4pOYsdXvNLqrdotzKp6-zyQg=w1766-h1324-no'
+          }],
+          allergens: ['rice', 'sulfites',],
+        }, {
+          name: 'Heróica con Carne de ternera',
+          description: '180 gr. de carne de ternera acompañado con mézclum de lechugas, tomate, cebolla crujiente y vinagreta de maracuyá.',
+          price: 8,
+          currency: '€',
+          soldOut: false,
+          media: [],
+          allergens: ['rice', 'sulfites',],
+        }]
+      },
+
+      ]
+    };
+    console.log(data)
+    pw.data = data;
+    </script>
+
+  </body>
+</html>
