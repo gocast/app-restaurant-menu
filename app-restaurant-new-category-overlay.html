@@ -95,6 +95,8 @@
             composed: true,
             detail
           }));
+
+          this.opened = false;
         }
       }
 
@@ -104,7 +106,8 @@
 
       _getFormValues() {
         return {
-          name: this.$.nameInput.value || null
+          name: this.$.nameInput.value || null,
+          items: []
         };
       }
 

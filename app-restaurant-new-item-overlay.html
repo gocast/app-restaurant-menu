@@ -1,0 +1,271 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../overlay-container/animated-overlay-mixin.html">
+<link rel="import" href="../goc-icons/goc-icons.html">
+<link rel="import" href="../input-file/input-file.html">
+<link rel="import" href="../touch-item/touch-item.html">
+<link rel="import" href="../offthread-image/offthread-image.html">
+<link rel="import" href="../goc-styles/goc-styles.html">
+
+<dom-module id="app-restaurant-new-item-overlay">
+  <template>
+    <style include="header-layout-styles btn-styles icon-btn-styles box-styles form-v1-styles">
+      :host {
+        background: var(--goc-background-color);
+        bottom: 0;
+        left: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+      }
+
+      .form__item .btn {
+        margin: 2px 7px;
+      }
+
+      .media {
+        @apply --layout-horizontal;
+        @apply --layout-wrap;
+        margin-top: 8px;
+      }
+
+      .media__item {
+        display: inline-flex;
+        margin: 0 3px 3px 0;
+        position: relative;
+      }
+
+      .media__offthread-image {
+        height: 120px;
+        width: 120px;
+      }
+
+      .media__delete-icon {
+        background: rgba(0, 0, 0, 0.8);
+        border-radius: 50%;
+        color: white;
+        cursor: pointer;
+        height: 18px;
+        padding: 5px;
+        position: absolute;
+        right: 5px;
+        top: 5px;
+        width: 18px;
+      }
+    </style>
+
+    <input-file
+        id="inputFile"
+        on-files-selected="_onFilesSelected"
+        on-files-loaded="_onFilesLoaded"></input-file>
+
+    <div class="header-layout">
+      <div class="header-layout__header">
+        <div class="header-toolbar">
+
+          <button class="icon-btn icon-btn--primary" on-click="_onBackTapped">
+            <touch-item><iron-icon icon="arrow-back"></iron-icon></touch-item>
+          </button>
+
+          <div class="header-toolbar__main-content">
+            <div class="header-toolbar__title">[[_computedToolbarTitle(item)]]</div>
+            <div class="header-toolbar__subtitle">e.g bacalao al douro</div>
+          </div>
+
+          <button class="btn btn--primary" on-click="_submit">
+            <touch-item>[[_computedToolbarSubmit(item)]]</touch-item>
+          </button>
+        </div>
+      </div>
+
+      <div class="header-layout__content">
+        <div class="box form">
+          <div class="form__item form__item--last">
+            <div class="form__input-container">
+              <label class="form__label">Name</label>
+              <input class="form__input" id="nameInput" placeholder="Name" value="[[item.name]]"/>
+            </div>
+          </div>
+
+          <div class="form__item form__item--last">
+            <div class="form__input-container">
+              <label class="form__label">Description</label>
+              <input class="form__input" id="descriptionInput" placeholder="Description" value="[[item.description]]"/>
+            </div>
+          </div>
+
+          <div class="form__item form__item--last">
+            <div class="form__input-container">
+              <label class="form__label">Price</label>
+              <input class="form__input" id="priceInput" type="number" placeholder="Price" value="[[item.price]]"/>
+            </div>
+          </div>
+
+          <div class="form__item form__item--last">
+            <div class="form__input-container">
+              <label class="form__label">Photos</label>
+
+              <div class="btn" on-click="_selectFileClicked">
+                <touch-item>Select files...</touch-item>
+              </div>
+            </div>
+
+            <div class="media form__note">
+              <dom-repeat items="[[_media]]">
+                <template>
+                  <div class="media__item">
+                    <iron-icon
+                        icon="close"
+                        class="media__delete-icon"
+                        on-click="_onDeleteMediaItemTapped"></iron-icon>
+
+                    <offthread-image
+                        class="media__offthread-image"
+                        src="[[item.0.url]]"
+                        sizing="cover"
+                        on-error="_imageLoadError"></offthread-image>
+                  </div>
+                </template>
+              </dom-repeat>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </template>
+  <script>
+
+    class AppRestaurantNewItemOverlay extends AnimatedOverlayMixin(Polymer.Element) {
+
+      static get is() {return 'app-restaurant-new-item-overlay';}
+
+      static get properties() {
+        return {
+
+          item: {
+            type: Object,
+            value: null
+          },
+
+          _media: {
+            type: Array,
+            value: _ => {
+              return [];
+            }
+          }
+
+        };
+      }
+
+      constructor() {
+        super();
+        this._overlayOpenAnimationFinish = this._overlayOpenAnimationFinish.bind(this);
+        this._onKeydown = this._onKeydown.bind(this);
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+        this._toggleListeners({enable: true});
+      }
+
+      disconnectedCallback() {
+        super.disconnectedCallback();
+        this._toggleListeners({enable: false});
+      }
+
+      _toggleListeners({enable}) {
+        const m = enable ? 'addEventListener' : 'removeEventListener';
+
+        this[m]('keydown', this._onKeydown);
+        this[m]('overlay-open-animation-finish', this._overlayOpenAnimationFinish);
+      }
+
+      _overlayOpenAnimationFinish() {
+        this.$.nameInput.focus();
+      }
+
+      _selectFileClicked() {
+        this.$.inputFile.selectFiles();
+      }
+
+      _onFilesLoaded(event) {
+        const files = event.detail.files;
+
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+
+          if (file.images) {
+            this.push('_media', file.images);
+          }
+        }
+      }
+
+      _imageLoadError(event) {
+
+      }
+
+      _onDeleteMediaItemTapped(event) {
+        const index = this._media.indexOf(event.model.item);
+        this.splice('_media', index, 1);
+      }
+
+      _submit() {
+        if (this._validate()) {
+          const detail = this._getFormValues();
+
+          this.dispatchEvent(new CustomEvent('submit', {
+            composed: true,
+            detail
+          }));
+
+          this.opened = false;
+        }
+      }
+
+      _validate() {
+        return true;
+      }
+
+      _getFormValues() {
+        return {
+          name: this.$.nameInput.value || null,
+          description: this.$.descriptionInput.value || null,
+          price: this.$.priceInput.value || null,
+        };
+      }
+
+      _onKeydown(event) {
+        const enterKey = 13;
+
+        if (event.keyCode === enterKey) {
+          this._submit();
+        }
+      }
+
+      _onBackTapped() {
+        requestAnimationFrame(_ => {
+          this.opened = false;
+        });
+      }
+
+      _computedToolbarTitle(item) {
+        if (item) {
+          return 'Edit an item';
+        }
+        return 'Add an item';
+      }
+
+      _computedToolbarSubmit(item) {
+        if (item) {
+          return 'Save';
+        }
+        return 'Create';
+      }
+
+    }
+
+    customElements.define(AppRestaurantNewItemOverlay.is, AppRestaurantNewItemOverlay);
+
+  </script>
+</dom-module>
