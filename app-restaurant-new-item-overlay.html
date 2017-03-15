@@ -55,6 +55,7 @@
 
     <input-file
         id="inputFile"
+        content-id$="[[contentId]]"
         on-files-selected="_onFilesSelected"
         on-files-loaded="_onFilesLoaded"></input-file>
 
@@ -79,21 +80,21 @@
 
       <div class="header-layout__content">
         <div class="box form">
-          <div class="form__item form__item--last">
+          <div class="form__item">
             <div class="form__input-container">
               <label class="form__label">Name</label>
               <input class="form__input" id="nameInput" placeholder="Name" value="[[item.name]]"/>
             </div>
           </div>
 
-          <div class="form__item form__item--last">
+          <div class="form__item">
             <div class="form__input-container">
               <label class="form__label">Description</label>
               <input class="form__input" id="descriptionInput" placeholder="Description" value="[[item.description]]"/>
             </div>
           </div>
 
-          <div class="form__item form__item--last">
+          <div class="form__item">
             <div class="form__input-container">
               <label class="form__label">Price</label>
               <input class="form__input" id="priceInput" type="number" placeholder="Price" value="[[item.price]]"/>
@@ -143,9 +144,12 @@
       static get properties() {
         return {
 
+          contentId: String,
+
           item: {
             type: Object,
-            value: null
+            value: null,
+            observer: '_itemChanged'
           },
 
           _media: {
@@ -183,10 +187,20 @@
 
       _overlayOpenAnimationFinish() {
         this.$.nameInput.focus();
+
+        if (this.item && this.item.media) {
+          this._media = this.item.media;
+        }
       }
 
       _selectFileClicked() {
         this.$.inputFile.selectFiles();
+      }
+
+      _onFilesSelected(event) {
+        event.detail.thumbnailSizes = [
+          {width: 240, height: 240}
+        ];
       }
 
       _onFilesLoaded(event) {
@@ -202,7 +216,6 @@
       }
 
       _imageLoadError(event) {
-
       }
 
       _onDeleteMediaItemTapped(event) {
@@ -232,6 +245,7 @@
           name: this.$.nameInput.value || null,
           description: this.$.descriptionInput.value || null,
           price: this.$.priceInput.value || null,
+          media: this._media || null
         };
       }
 

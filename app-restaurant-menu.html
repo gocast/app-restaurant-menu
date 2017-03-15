@@ -82,6 +82,8 @@
 
           contentName: String,
 
+          contentId: String,
+
           data: {
             type: Object,
             observer: '_dataChanged'
@@ -100,6 +102,17 @@
         }
       }
 
+      _updateContent() {
+        this.dispatchEvent(new CustomEvent('content-update', {
+          composed: true,
+          detail: {
+            data: this.data,
+            contentId: this.contentId,
+            updateRelease: true,
+          }
+        }));
+      }
+
       _onCreateCategoryTapped(event) {
         if (!this._newCategoryOverlay) {
           this._newCategoryOverlay = document.createElement('app-restaurant-new-category-overlay');
@@ -111,6 +124,7 @@
           this._newCategoryOverlay.addEventListener('submit', event => {
             if (!event.currentTarget.canceled) {
               this.push('data.categories', event.detail);
+              this._updateContent();
             }
           });
 
@@ -128,6 +142,7 @@
           }
 
           this._newItemOverlay = document.createElement('app-restaurant-new-item-overlay');
+          this._newItemOverlay.contentId = this.contentId;
           this._newItemOverlay.onDetach = _ => {
             this._newItemOverlay = null;
           };
@@ -135,7 +150,7 @@
           this._newItemOverlay.addEventListener('submit', event => {
             if (!event.currentTarget.canceled) {
               this.push(`data.categories.${categoryIndex}.items`, event.detail);
-              console.log(this.data.categories)
+              this._updateContent();
             }
           });
 
@@ -148,15 +163,20 @@
           const item = event.model.item;
 
           this._newItemOverlay = document.createElement('app-restaurant-new-item-overlay');
+          this._newItemOverlay.contentId = this.contentId;
           this._newItemOverlay.onDetach = _ => {
             this._newItemOverlay = null;
           };
 
           this._newItemOverlay.item = item;
 
-          this._newItemOverlay.addEventListener('submit', event => {
-            if (!event.currentTarget.canceled) {
-              // update the item!
+          this._newItemOverlay.addEventListener('submit', evt => {
+            if (!evt.currentTarget.canceled) {
+              Object.keys(item).forEach(key => {
+                event.model.set(`item.${key}`, evt.detail[key]);
+              });
+
+              this._updateContent();
             }
           });
 
@@ -166,6 +186,10 @@
 
           this._newItemOverlay.open();
         }
+      }
+
+      _onBackTapped() {
+        this.dispatchEvent(new Event('close-app', {composed: true}));
       }
 
     }
