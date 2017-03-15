@@ -72,6 +72,14 @@
             <div class="header-toolbar__subtitle">e.g bacalao al douro</div>
           </div>
 
+          <dom-if if="[[item]]">
+            <template>
+              <button class="icon-btn icon-btn--primary" on-click="_onDeleteItemTapped">
+                <touch-item><iron-icon icon="delete"></iron-icon></touch-item>
+              </button>
+            </template>
+          </dom-if>
+
           <button class="btn btn--primary" on-click="_submit">
             <touch-item>[[_computedToolbarSubmit(item)]]</touch-item>
           </button>
@@ -148,8 +156,7 @@
 
           item: {
             type: Object,
-            value: null,
-            observer: '_itemChanged'
+            value: null
           },
 
           _media: {
@@ -230,6 +237,17 @@
           this.dispatchEvent(new CustomEvent('submit', {
             composed: true,
             detail
+          }));
+
+          this.opened = false;
+        }
+      }
+
+      _onDeleteItemTapped() {
+        if (this.item && confirm('Delete this item?')) {
+          this.dispatchEvent(new CustomEvent('delete', {
+            composed: true,
+            detail: {item: this.item}
           }));
 
           this.opened = false;

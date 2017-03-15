@@ -2,6 +2,7 @@
 <link rel="import" href="../goc-styles/goc-styles.html">
 <link rel="import" href="../goc-icons/goc-icons.html">
 <link rel="import" href="../goc-apps/goc-app-icon.html">
+<link rel="import" href="../touch-item/touch-item.html">
 <link rel="import" href="app-restaurant-new-category-overlay.html">
 <link rel="import" href="app-restaurant-new-item-overlay.html">
 
@@ -43,7 +44,7 @@
       </div>
 
       <div class="header-layout__content">
-        <dom-repeat items="[[data.categories]]" as="category">
+        <dom-repeat items="[[data.categories]]" as="category" index-as="category_index">
           <template>
             <div class="box">
               <div class="box__row">[[category.name]]</div>
@@ -57,9 +58,9 @@
               </div>
               <dom-repeat items="[[category.items]]">
                 <template>
-                  <div class="box__row" on-click="_onEditItemTapped">
-                    <div>[[item.name]]</div>
-                  </div>
+                  <touch-item on-click="_onEditItemTapped" category-index$="[[category_index]]">
+                    <div class="box__row">[[item.name]]</div>
+                  </touch-item>
                 </template>
               </dom-repeat>
             </div>
@@ -160,7 +161,9 @@
 
       _onEditItemTapped(event) {
         if (!this._newItemOverlay) {
-          const item = event.model.item;
+          const model = event.model;
+          const categoryIndex = Number(event.currentTarget.getAttribute('category-index'));
+          const category = this.data.categories[categoryIndex];
 
           this._newItemOverlay = document.createElement('app-restaurant-new-item-overlay');
           this._newItemOverlay.contentId = this.contentId;
@@ -168,12 +171,12 @@
             this._newItemOverlay = null;
           };
 
-          this._newItemOverlay.item = item;
+          this._newItemOverlay.item = model.item;
 
-          this._newItemOverlay.addEventListener('submit', evt => {
-            if (!evt.currentTarget.canceled) {
-              Object.keys(item).forEach(key => {
-                event.model.set(`item.${key}`, evt.detail[key]);
+          this._newItemOverlay.addEventListener('submit', event => {
+            if (!event.currentTarget.canceled) {
+              Object.keys(model.item).forEach(key => {
+                model.set(`item.${key}`, event.detail[key]);
               });
 
               this._updateContent();
@@ -181,7 +184,12 @@
           });
 
           this._newItemOverlay.addEventListener('delete', event => {
-            // delete the item
+            if (!event.currentTarget.canceled) {
+              const itemIndex = category.items.indexOf(event.detail.item);
+
+              this.splice(`data.categories.${categoryIndex}.items`, itemIndex, 1);
+              this._updateContent();
+            }
           });
 
           this._newItemOverlay.open();
