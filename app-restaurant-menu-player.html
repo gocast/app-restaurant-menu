@@ -37,8 +37,8 @@
       }
       .overlay--top-center {
         top: 10%;
-        right: 10%;
-        left: 10%;
+        right: 20%;
+        left: 20%;
         margin: auto;
       }
       .overlay--bottom-right {
@@ -130,16 +130,6 @@
         clearInterval(this._nextSlideInterval);
       }
 
-      /**
-       * When the pic finishes rendering, update title and price overlay
-       */
-      _onRender() {
-        this._currentSlideName = this._currentSlide.name;
-        this._currentSlidePrice = this._currentSlide.price;
-        // get the next slide position
-        this.$.overlay.className = this._slidePositions[this._currentSlideIndex % this._slidePositions.length];
-      }
-
       _dataChanged(data) {
         this._currentSlideIndex = 0;
         this._nextSlideInterval = setInterval(this._nextSlide, 3000);
@@ -169,6 +159,9 @@
           img.addEventListener('render', _ => {
             this._currentSlideName = slide.name;
             this._currentSlidePrice = slide.price;
+            this.$.overlay.className = this._slidePositions[
+              this._currentSlideIndex % this._slidePositions.length];
+
 
             // Old slide out
             if (oldSlide) {
