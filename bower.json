@@ -8,9 +8,10 @@
     "goc-apps": "git@github.com:gocast/goc-apps.git",
     "goc-icons": "git@github.com:gocast/goc-icons.git",
     "goc-styles": "git@github.com:gocast/goc-styles.git",
-    "input-file": "git@github.com:sharedlabs/input-file.git",
+    "input-file": "git@github.com:sharedlabs/input-file.git#^1.1.0",
     "iron-flex-layout": "PolymerElements/iron-flex-layout#2.0-preview",
     "iron-image": "PolymerElements/iron-image#2.0-preview",
+    "offthread-image": "git@github.com:sharedlabs/offthread-image.git#^1.0.0",
     "overlay-container": "git@github.com:sharedlabs/overlay-container.git",
     "paper-spinner": "PolymerElements/paper-spinner#2.0-preview",
     "polymer": "git@github.com:Polymer/polymer#v2.0.0-rc.2",
@@ -27,6 +28,7 @@
     "polymer": "v2.0.0-rc.2",
     "iron-icon": "2.0-preview",
     "iron-iconset-svg": "2.0-preview",
-    "iron-meta": "2.0-preview"
+    "iron-meta": "2.0-preview",
+    "iron-image": "2.0-preview"
   }
 }
