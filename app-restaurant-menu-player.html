@@ -1,0 +1,225 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<!-- <link rel="import" href="../iron-image/iron-image.html"> -->
+<link rel="import" href="../offthread-image/offthread-image.html">
+
+<dom-module id="app-restaurant-menu-player">
+  <template>
+    <style>
+      :host {
+        position: relative;
+        display: block;
+      }
+
+      .image {
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        position: absolute;
+        z-index: 0;
+      }
+
+      #overlay {
+        background: rgba(0,0,0,0.8);
+        color: #fff;
+        font-size: 18px;
+        font-weight: 700;
+        padding: 20px;
+        position: absolute;
+        max-width: 90%;
+        display: flex;
+        z-index: 1;
+      }
+
+      .overlay--top-left {
+        left: 10%;
+        top: 10%;
+      }
+      .overlay--top-center {
+        top: 10%;
+        right: 20%;
+        left: 20%;
+        margin: auto;
+      }
+      .overlay--bottom-right {
+        bottom: 10%;
+        right: 10%;
+      }
+
+      .overlay__name {
+        margin-right: 20px;
+      }
+
+      .overlay__price {
+        margin-left: auto;
+      }
+    </style>
+
+    <div id="overlay" class="overlay--top-left">
+      <div class="overlay__name">[[_currentSlideName]]</div>
+      <div class="overlay__price">[[_currentSlidePrice]]</div>
+    </div>
+
+<!--     <offthread-image
+        class="image"
+        src="[[_computedPhotoUrl(_currentSlide)]]"
+        preload
+        on-render="_onRender"
+        sizing="cover"></offthread-image> -->
+
+  </template>
+
+  <script>
+
+    class AppRestaurantMenuPlayer extends Polymer.Element {
+
+      static get is() {return 'app-restaurant-menu-player';}
+
+      static get properties() {
+        return {
+
+          data: {
+            type: Object,
+            observer: '_dataChanged'
+          },
+
+          _slides: {
+            type: Array,
+            computed: '_computeSlides(data)'
+          },
+
+          _currentSlide: Object,
+
+          _currentSlideName: String,
+
+          _currentSlidePrice: String,
+
+          _currentSlideIndex: Number,
+
+          _slidePositions: {
+            type: Object,
+            value: _ => {
+              return [
+                'overlay--top-left',
+                'overlay--top-center',
+                'overlay--bottom-right',
+              ];
+            }
+          }
+
+        };
+      }
+
+      static get observers() {
+        return [
+          '_loadNextSlide(_slides, _currentSlideIndex)'
+        ];
+      }
+
+      constructor() {
+        super();
+        this._nextSlide = this._nextSlide.bind(this);
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+      }
+
+      disconnectedCallback() {
+        super.disconnectedCallback();
+        clearInterval(this._nextSlideInterval);
+      }
+
+      _dataChanged(data) {
+        this._currentSlideIndex = 0;
+        this._nextSlideInterval = setInterval(this._nextSlide, 3000);
+      }
+
+      _nextSlide() {
+        let nextSlideIndex = this._currentSlideIndex + 1;
+        if (!this._slides[nextSlideIndex]) {
+          nextSlideIndex = 0;
+        }
+        this._currentSlideIndex = nextSlideIndex;
+      }
+
+      _loadNextSlide(slides, currentSlideIndex) {
+        if (slides && !isNaN(currentSlideIndex)) {
+          const oldSlide = this._currentSlide;
+          const slide = slides[currentSlideIndex];
+          const img = document.createElement('offthread-image');
+          img.className = 'image';
+          img.src = this._computedPhotoUrl(slide);
+          img.preload = true;
+          img.sizing = 'cover';
+          img.style.opacity = 0;
+          this.shadowRoot.appendChild(img);
+          this._currentSlide = img;
+
+          img.addEventListener('render', _ => {
+            this._currentSlideName = slide.name;
+            this._currentSlidePrice = slide.price;
+            this.$.overlay.className = this._slidePositions[
+              this._currentSlideIndex % this._slidePositions.length];
+
+
+            // Old slide out
+            if (oldSlide) {
+              const slideout = oldSlide.animate([{
+                  opacity: '1',
+                  transform: 'translate3d(0,0,0)',
+                }, {
+                  opacity:'1',
+                  transform: 'translate3d(-100%,0,0)',
+                }
+              ], {duration: 300,});
+              slideout.onfinish = _ => oldSlide.remove();
+            }
+
+            // New slide in
+            const slidein = img.animate([{
+                opacity: '1',
+                transform: 'translate3d(100%,0,0)',
+              }, {
+                opacity:'1',
+                transform: 'translate3d(0,0,0)',
+              }
+            ], {duration: 300,});
+            slidein.onfinish = _ => img.style.opacity = 1;
+          });
+        }
+      }
+
+      _computeSlides(data) {
+        // flatten items into one array and sort randomly
+        return this.arrayShuffle([].concat(...data.categories.map(c => c.items)));
+      }
+
+      _computedPhotoUrl(currentSlide) {
+        const pic = currentSlide.media[0].find(pic => pic.width === undefined);
+        return pic.url;
+      }
+
+      arrayShuffle(array) {
+        var currentIndex = array.length, temporaryValue, randomIndex;
+
+        // While there remain elements to shuffle...
+        while (0 !== currentIndex) {
+          // Pick a remaining element...
+          randomIndex = Math.floor(Math.random() * currentIndex);
+          currentIndex -= 1;
+
+          // And swap it with the current element.
+          temporaryValue = array[currentIndex];
+          array[currentIndex] = array[randomIndex];
+          array[randomIndex] = temporaryValue;
+        }
+        return array;
+      }
+
+    }
+
+    customElements.define(AppRestaurantMenuPlayer.is, AppRestaurantMenuPlayer);
+
+  </script>
+</dom-module>
