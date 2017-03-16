@@ -191,7 +191,7 @@
 
           this._newCategoryOverlay.addEventListener('submit', event => {
             if (!event.currentTarget.canceled) {
-              Object.keys(model.category).forEach(key => {
+              Object.keys(event.detail).forEach(key => {
                 model.set(`category.${key}`, event.detail[key]);
               });
 
@@ -254,7 +254,7 @@
 
           this._newItemOverlay.addEventListener('submit', event => {
             if (!event.currentTarget.canceled) {
-              Object.keys(model.item).forEach(key => {
+              Object.keys(event.detail).forEach(key => {
                 model.set(`item.${key}`, event.detail[key]);
               });
 
