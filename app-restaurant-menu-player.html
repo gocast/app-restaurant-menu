@@ -51,7 +51,6 @@
       static get observers() {
         return [
           '_slideIndexChanged(_currentSlideIndex, _slides)',
-          // '_loadNextSlide(_slides, _currentSlideIndex)',
         ];
       }
 
@@ -67,7 +66,7 @@
 
       _dataChanged(data) {
         this._currentSlideIndex = 0;
-        this._nextSlideInterval = setInterval(this._nextSlide, 5000);
+        this._nextSlideInterval = setInterval(this._nextSlide, 8000);
       }
 
       _slideIndexChanged(currentSlideIndex, slides) {
@@ -94,11 +93,13 @@
           newSlideElement.slide = newSlide;
           newSlideElement.position = this._slidePositions[
             this._currentSlideIndex % this._slidePositions.length];
-          newSlideElement.addEventListener('render', _ => {
+          const render = _ => {
             Polymer.RenderStatus.afterNextRender(null, _ => {
               this._transitionSlides(newSlideElement, oldSlideElement);
             });
-          });
+            newSlideElement.removeEventListener('render', render);
+          };
+          newSlideElement.addEventListener('render', render);
           this.shadowRoot.appendChild(newSlideElement);
           this._currentSlide = newSlideElement;
         }
