@@ -100,7 +100,7 @@
                       <div class="item__texts">
                         <div class="item__title">[[item.name]]</div>
                         <div class="item__description">[[item.description]]</div>
-                        <div class="item__price">[[item.currency]][[item.price]]</div>
+                        <div class="item__price">[[_computeCurrencySymbol(item.currency)]][[item.price]]</div>
                       </div>
 
                       <dom-if if="[[item.media.length]]">
@@ -163,6 +163,15 @@
           if (smallThumbnail) {
             return smallThumbnail.url;
           }
+        }
+      }
+
+      _computeCurrencySymbol(currency) {
+        if (currency === 'EUR') {
+          return '€';
+        }
+        if (currency === 'USD') {
+          return '$';
         }
       }
 
