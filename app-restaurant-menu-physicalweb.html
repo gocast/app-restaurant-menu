@@ -10,68 +10,73 @@
       :host {
         display: block;
         height: 100%;
-        font-weight: 300;
-        padding: 0 25px;
       }
 
       ul {
+        list-style: none;
         margin: 0;
         padding: 0;
-        list-style: none;
       }
 
       .category {
-        margin-bottom: 20px;
+        background: white;
+        border: 1px solid var(--paper-grey-300);
+        margin: 20px 0;
       }
 
       .category__name {
+        font-size: 22px;
+        font-weight: 700;
         margin: 0;
+        padding: 20px 0 15px;
         text-align: center;
-        font-weight: 400;
-        font-size: 26px;
       }
 
       .category__header-sep {
-        width: 50px;
-        height: 1px;
-        background: #ddd;
-        margin: 10px auto;
+        background: var(--paper-grey-900);
+        height: 2px;
+        margin: 0 auto 20px;
+        width: 30px;
       }
 
       .item {
+        @apply --layout-flex;
+        padding: 0 20px;
+      }
+
+      .item__inner {
         @apply --layout-horizontal;
-        justify-content: space-between;
-        border-bottom: solid 1px #ddd;
-        padding-bottom: 10px;
+        border-bottom: solid 1px var(--paper-grey-300);
+        padding: 20px 0;
       }
 
-      .item:nth-last-child(-n+2) {
+      .item:nth-last-child(-n+2) .item__inner {
         border-bottom: none;
-        padding-bottom: 0;
-      }
-
-      .item__text {
-        margin-right: 10px;
-      }
-
-      .item__name {
-        margin: 10px 0 0 0;
-        font-size: 16px;
-        font-weight: 700;
-      }
-
-      .item__description {
-        margin: 10px 0;
       }
 
       .item__picture {
         margin-left: auto;
       }
 
+      .item__title {
+        font-size: 18px;
+        font-weight: 700;
+      }
+
+      .item__description {
+        color: var(--paper-grey-600);
+        font-size: 14px;
+        margin: 10px 0;
+      }
+
+      .item__price {
+        color: var(--paper-grey-600);
+      }
+
       .item__picture iron-image {
-        width: 120px;
-        height: 80%;
-        margin-top: 15px;
+        width: 100px;
+        height: 100px;
+        margin-left: 20px;
       }
     </style>
 
@@ -91,24 +96,26 @@
               <dom-repeat items="[[category.items]]">
                 <template>
                   <li class="item">
-                    <div class="item__text">
-                      <h3 class="item__name">[[item.name]]</h3>
-                      <div class="item__description">[[item.description]]</div>
-                      <div class="item__price">[[item.currency]][[item.price]]</div>
-                    </div>
+                    <div class="item__inner">
+                      <div class="item__texts">
+                        <div class="item__title">[[item.name]]</div>
+                        <div class="item__description">[[item.description]]</div>
+                        <div class="item__price">[[item.currency]][[item.price]]</div>
+                      </div>
 
-                    <dom-if if="[[_computeHasPicture(item)]]">
-                      <template>
-                        <div class="item__picture">
-                          <iron-image
-                              src$="[[_computeMainPicture(item)]]"
-                              sizing="contain"
-                              position="top"
-                              preload
-                              fade></iron-image>
-                        </div>
-                      </template>
-                    </dom-if>
+                      <dom-if if="[[item.media.length]]">
+                        <template>
+                          <div class="item__picture">
+                            <iron-image
+                                src$="[[_computeMainPicture(item)]]"
+                                sizing="cover"
+                                position="top"
+                                preload
+                                fade></iron-image>
+                          </div>
+                        </template>
+                      </dom-if>
+                    </div>
                   </li>
                 </template>
               </dom-repeat>
@@ -150,17 +157,13 @@
         if (item.media[0]) {
           const thumbs = item.media[0];
           const smallThumbnail = thumbs.find(image => {
-            return image.width === 240;
+            return image.width <= 300;
           }) || thumbs[0];
 
           if (smallThumbnail) {
             return smallThumbnail.url;
           }
         }
-      }
-
-      _computeHasPicture(item) {
-        return item.media.length;
       }
 
     }
