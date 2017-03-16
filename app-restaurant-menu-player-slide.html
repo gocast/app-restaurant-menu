@@ -1,0 +1,112 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../offthread-image/offthread-image.html">
+
+<dom-module id="app-restaurant-menu-player-slide">
+  <template>
+    <style>
+      :host {
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        position: absolute;
+      }
+
+      .image {
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        position: absolute;
+        z-index: 0;
+      }
+
+      #overlay {
+        background: rgba(0,0,0,0.8);
+        color: #fff;
+        font-size: 18px;
+        font-weight: 700;
+        padding: 20px;
+        position: absolute;
+        max-width: 90%;
+        display: flex;
+        z-index: 1;
+      }
+
+      .overlay--top-left {
+        left: 10%;
+        top: 10%;
+      }
+      .overlay--top-center {
+        top: 10%;
+        right: 20%;
+        left: 20%;
+        margin: auto;
+      }
+      .overlay--bottom-right {
+        bottom: 10%;
+        right: 10%;
+      }
+
+      .overlay__name {
+        margin-right: 20px;
+      }
+
+      .overlay__price {
+        margin-left: auto;
+      }
+    </style>
+
+
+    <div id="overlay" class$="[[_computeOverlayPositionClass(position)]]">
+      <div class="overlay__name">[[slide.name]]</div>
+      <div class="overlay__price">[[slide.price]]</div>
+    </div>
+
+    <offthread-image
+        class="image"
+        src="[[_computedPhotoUrl(slide)]]"
+        on-render="_onRender"
+        preload
+        sizing="cover"></offthread-image>
+
+  </template>
+
+  <script>
+
+    class AppRestaurantMenuPlayerSlide extends Polymer.Element {
+
+      static get is() {return 'app-restaurant-menu-player-slide';}
+
+      static get properties() {
+        return {
+
+          slide: Object,
+
+          position: {
+            type: String,
+            value: _ => 'top-left',
+          }
+
+        };
+      }
+
+      _onRender() {
+        this.dispatchEvent(new Event('render', {composed: true}));
+      }
+
+      _computedPhotoUrl(slide) {
+        const pic = slide.media[0].find(pic => pic.width === undefined);
+        return pic.url;
+      }
+
+      _computeOverlayPositionClass(position) {
+        return `overlay--${position}`;
+      }
+
+    }
+
+    customElements.define(AppRestaurantMenuPlayerSlide.is, AppRestaurantMenuPlayerSlide);
+
+  </script>
+</dom-module>
